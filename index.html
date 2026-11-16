@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Mi Gimnasio · Cuenta</title>
+  <style>
+    :root {
+      --bg: #f6f3f1;
+      --card: #ffffff;
+      --text: #1d1b1a;
+      --muted: #6b6461;
+      --accent: #e65100;
+      --accent-text: #ffffff;
+      --ok: #2e7d32;
+      --ok-bg: #e8f5e9;
+      --err: #c62828;
+      --err-bg: #fdecea;
+      --border: #e7e1dd;
+      --field: #f4efec;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #161312;
+        --card: #211d1b;
+        --text: #f3eeeb;
+        --muted: #a9a19c;
+        --accent: #ff8a3d;
+        --accent-text: #1b0f06;
+        --ok: #81c784;
+        --ok-bg: #1d2b1e;
+        --err: #ef9a9a;
+        --err-bg: #2f1b1b;
+        --border: #352f2c;
+        --field: #2b2624;
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #161312; --card: #211d1b; --text: #f3eeeb; --muted: #a9a19c;
+      --accent: #ff8a3d; --accent-text: #1b0f06; --ok: #81c784; --ok-bg: #1d2b1e;
+      --err: #ef9a9a; --err-bg: #2f1b1b; --border: #352f2c; --field: #2b2624;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px 16px;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px 28px;
+      text-align: center;
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-weight: 700; color: var(--accent); margin-bottom: 24px;
+      letter-spacing: .2px;
+    }
+    .icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      display: grid; place-items: center; margin: 0 auto 16px;
+    }
+    .icon svg { width: 36px; height: 36px; }
+    .icon.ok { background: var(--ok-bg); color: var(--ok); }
+    .icon.err { background: var(--err-bg); color: var(--err); }
+    .icon.neutral { background: var(--field); color: var(--accent); }
+    h1 { font-size: 22px; margin: 0 0 8px; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    form { text-align: left; margin-top: 20px; }
+    label { display: block; font-size: 14px; font-weight: 600; margin: 14px 0 6px; }
+    input {
+      width: 100%; padding: 12px 14px; font: inherit; color: var(--text);
+      background: var(--field); border: 1px solid transparent; border-radius: 12px;
+      outline: none;
+    }
+    input:focus { border-color: var(--accent); }
+    .hint { font-size: 13px; color: var(--muted); margin-top: 6px; }
+    .error-msg {
+      background: var(--err-bg); color: var(--err); font-size: 14px;
+      border-radius: 10px; padding: 10px 12px; margin-top: 14px;
+    }
+    button {
+      width: 100%; margin-top: 20px; padding: 13px 16px;
+      font: inherit; font-weight: 700; border: 0; border-radius: 14px;
+      background: var(--accent); color: var(--accent-text); cursor: pointer;
+    }
+    button:disabled { opacity: .6; cursor: default; }
+    .spinner {
+      width: 36px; height: 36px; margin: 8px auto 16px;
+      border: 3px solid var(--border); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .hidden { display: none !important; }
+    .foot { margin-top: 20px; font-size: 13px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main class="card" aria-live="polite">
+    <div class="brand">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M20.57 14.86 22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+      </svg>
+      Mi Gimnasio
+    </div>
+
+    <!-- Cargando -->
+    <section id="v-loading">
+      <div class="spinner" role="status" aria-label="Cargando"></div>
+      <p>Un momento…</p>
+    </section>
+
+    <!-- Éxito -->
+    <section id="v-ok" class="hidden">
+      <div class="icon ok">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <h1 id="ok-title">¡Cuenta confirmada!</h1>
+      <p id="ok-text">Ya puedes volver a la app e iniciar sesión.</p>
+    </section>
+
+    <!-- Error -->
+    <section id="v-error" class="hidden">
+      <div class="icon err">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="10"/></svg>
+      </div>
+      <h1>Enlace no válido</h1>
+      <p id="error-text">El enlace no es válido o ya caducó.</p>
+      <p>Vuelve a la app y solicita uno nuevo.</p>
+    </section>
+
+    <!-- Nueva contraseña -->
+    <section id="v-reset" class="hidden">
+      <div class="icon neutral">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      </div>
+      <h1>Nueva contraseña</h1>
+      <p>Elige la contraseña con la que entrarás a la app.</p>
+      <form id="reset-form" novalidate>
+        <label for="pw1">Nueva contraseña</label>
+        <input id="pw1" type="password" autocomplete="new-password" minlength="8" required>
+        <div class="hint">Mínimo 8 caracteres.</div>
+        <label for="pw2">Repite la contraseña</label>
+        <input id="pw2" type="password" autocomplete="new-password" minlength="8" required>
+        <div id="reset-error" class="error-msg hidden"></div>
+        <button id="reset-btn" type="submit">Guardar contraseña</button>
+      </form>
+    </section>
+
+    <!-- Llegó sin enlace -->
+    <section id="v-info" class="hidden">
+      <div class="icon neutral">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="m4 6 8 7 8-7"/></svg>
+      </div>
+      <h1>Mi Gimnasio</h1>
+      <p>Esta página se abre desde los enlaces que te enviamos por correo para confirmar tu cuenta o cambiar tu contraseña.</p>
+    </section>
+
+    <div class="foot">Puedes cerrar esta pestaña cuando termines.</div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script>
+    // ================================================================
+    // CONFIGURACIÓN — pega aquí la anon key de Gymapp
+    // (Project Settings → API Keys → Legacy API keys → anon public).
+    // Es pública por diseño; NUNCA pongas aquí la service_role.
+    // ================================================================
+    const SUPABASE_URL = 'https://tdtdyxbwpiizidsmlaij.supabase.co';
+    const SUPABASE_ANON_KEY = 'PEGA_AQUI_TU_ANON_KEY';
+
+    const views = ['loading', 'ok', 'error', 'reset', 'info'];
+    function show(name) {
+      for (const v of views) {
+        document.getElementById('v-' + v).classList.toggle('hidden', v !== name);
+      }
+    }
+    function showOk(title, text) {
+      document.getElementById('ok-title').textContent = title;
+      document.getElementById('ok-text').textContent = text;
+      show('ok');
+    }
+    function showError(msg) {
+      document.getElementById('error-text').textContent = translate(msg);
+      show('error');
+    }
+
+    // Mensajes de Supabase → español
+    function translate(msg) {
+      const m = String(msg || '').toLowerCase();
+      if (m.includes('api key')) {
+        return 'La página no está bien configurada: revisa la anon key en index.html.';
+      }
+      if (m.includes('expired') || m.includes('invalid') || m.includes('not found')) {
+        return 'El enlace no es válido o ya caducó. Los enlaces solo funcionan una vez y durante un tiempo limitado.';
+      }
+      if (m.includes('different from the old')) {
+        return 'La nueva contraseña debe ser distinta de la anterior.';
+      }
+      if (m.includes('at least')) {
+        return 'La contraseña es demasiado corta.';
+      }
+      if (m.includes('weak')) {
+        return 'La contraseña es demasiado débil. Prueba con una más larga o con números y símbolos.';
+      }
+      if (m.includes('fetch') || m.includes('network')) {
+        return 'No hay conexión. Revisa tu internet y vuelve a abrir el enlace.';
+      }
+      return msg || 'Ha ocurrido un error inesperado.';
+    }
+
+    const query = new URLSearchParams(window.location.search);
+    const hash = new URLSearchParams(window.location.hash.slice(1));
+
+    let client = null;
+    try {
+      client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+      });
+    } catch (_) { /* se informa abajo si hace falta */ }
+
+    async function main() {
+      const errorDesc = query.get('error_description') || hash.get('error_description');
+      const tokenHash = query.get('token_hash');
+      const type = query.get('type') || hash.get('type');
+
+      // Limpia la URL para que el token no quede en el historial
+      if (tokenHash || hash.get('access_token')) {
+        history.replaceState(null, '', window.location.pathname);
+      }
+
+      if (errorDesc) return showError(errorDesc);
+
+      // Enlaces de las plantillas en español: ?token_hash=…&type=…
+      if (tokenHash && type) {
+        if (!client) return showError('No se pudo cargar la página. Inténtalo de nuevo.');
+        const { error } = await client.auth.verifyOtp({ token_hash: tokenHash, type });
+        if (error) return showError(error.message);
+        if (type === 'recovery') return show('reset');
+        if (type === 'email_change') {
+          return showOk('¡Correo actualizado!', 'Tu nuevo correo quedó confirmado. Usa ese correo para iniciar sesión.');
+        }
+        return showOk('¡Cuenta confirmada!', 'Ya puedes volver a la app e iniciar sesión con tu correo y contraseña.');
+      }
+
+      // Enlaces con el formato por defecto de Supabase (#access_token=…)
+      if (hash.get('access_token')) {
+        if (type === 'recovery' && client) {
+          const { error } = await client.auth.setSession({
+            access_token: hash.get('access_token'),
+            refresh_token: hash.get('refresh_token') || '',
+          });
+          if (error) return showError(error.message);
+          return show('reset');
+        }
+        return showOk('¡Cuenta confirmada!', 'Ya puedes volver a la app e iniciar sesión.');
+      }
+
+      // Formato PKCE (?code=…): el correo ya quedó verificado al pasar por Supabase
+      if (query.get('code')) {
+        return showOk('¡Listo!', 'Tu correo quedó verificado. Vuelve a la app e inicia sesión.');
+      }
+
+      show('info');
+    }
+
+    document.getElementById('reset-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pw1 = document.getElementById('pw1').value;
+      const pw2 = document.getElementById('pw2').value;
+      const box = document.getElementById('reset-error');
+      const btn = document.getElementById('reset-btn');
+      const fail = (msg) => { box.textContent = msg; box.classList.remove('hidden'); };
+      box.classList.add('hidden');
+
+      if (pw1.length < 8) return fail('La contraseña debe tener al menos 8 caracteres.');
+      if (pw1 !== pw2) return fail('Las contraseñas no coinciden.');
+
+      btn.disabled = true;
+      btn.textContent = 'Guardando…';
+      const { error } = await client.auth.updateUser({ password: pw1 });
+      btn.disabled = false;
+      btn.textContent = 'Guardar contraseña';
+      if (error) return fail(translate(error.message));
+
+      await client.auth.signOut({ scope: 'local' });
+      showOk('¡Contraseña cambiada!', 'Vuelve a la app e inicia sesión con tu nueva contraseña.');
+    });
+
+    main().catch((err) => showError(err && err.message));
+  </script>
+</body>
+</html>
